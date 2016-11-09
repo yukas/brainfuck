@@ -23,6 +23,13 @@ class BrainfuckTest < Minitest::Test
     
     assert_equal subject.current_cell_index, 1
   end
+  
+  def test_less_than_sign_decrements_the_pointer
+    subject.code = ">>><"
+    subject.execute_code
+    
+    assert_equal subject.current_cell_index, 2
+  end
 end
 
 class Brainfuck
@@ -36,7 +43,14 @@ class Brainfuck
   end
   
   def execute_code
-    @current_cell_index += 1
+    code.each_char do |command|
+      case command
+      when ">"
+        @current_cell_index += 1
+      when "<"
+        @current_cell_index -= 1
+      end
+    end
   end
   
   def cell_value_at(cell_index)
