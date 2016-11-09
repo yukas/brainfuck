@@ -2,7 +2,7 @@ require "minitest/autorun"
 
 class BrainfuckTest < Minitest::Test
   def subject
-    Brainfuck.new
+    @subject ||= Brainfuck.new
   end
   
   def test_size_of_memory_is_less_than_30000_cells
@@ -16,13 +16,27 @@ class BrainfuckTest < Minitest::Test
   def test_pointer_is_point_to_beginning_of_memory
     assert_equal 0, subject.current_cell_index
   end
+  
+  def test_greater_than_sign_increments_the_pointer
+    subject.code = ">"
+    subject.execute_code
+    
+    assert_equal subject.current_cell_index, 1
+  end
 end
 
 class Brainfuck
   CELL_ARRAY_SIZE = 30_000
   
-  def current_cell_index
-    0
+  attr_reader :current_cell_index
+  attr_accessor :code
+  
+  def initialize
+    @current_cell_index = 0
+  end
+  
+  def execute_code
+    @current_cell_index += 1
   end
   
   def cell_value_at(cell_index)
