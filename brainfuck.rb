@@ -21,14 +21,21 @@ class BrainfuckTest < Minitest::Test
     subject.code = ">"
     subject.execute_code
     
-    assert_equal subject.current_cell_index, 1
+    assert_equal 1, subject.current_cell_index
   end
   
   def test_less_than_sign_decrements_the_pointer
     subject.code = ">>><"
     subject.execute_code
     
-    assert_equal subject.current_cell_index, 2
+    assert_equal 2, subject.current_cell_index
+  end
+  
+  def test_plus_sign_increments_current_cell_value
+    subject.code = "+"
+    subject.execute_code
+    
+    assert_equal 1, subject.current_cell_value
   end
 end
 
@@ -40,6 +47,7 @@ class Brainfuck
   
   def initialize
     @current_cell_index = 0
+    @memory = Array.new(CELL_ARRAY_SIZE, 0)
   end
   
   def execute_code
@@ -49,11 +57,24 @@ class Brainfuck
         @current_cell_index += 1
       when "<"
         @current_cell_index -= 1
+      when "+"
+        set_cell_value_at(current_cell_index, cell_value_at(current_cell_index) + 1)
       end
     end
   end
   
   def cell_value_at(cell_index)
-    0
+    memory[cell_index]
   end
+  
+  def set_cell_value_at(cell_index, new_value)
+    memory[cell_index] = new_value
+  end
+  
+  def current_cell_value
+    cell_value_at(current_cell_index)
+  end
+  
+  private
+  attr_reader :memory
 end
