@@ -18,22 +18,19 @@ class BrainfuckTest < Minitest::Test
   end
   
   def test_greater_than_sign_increments_the_pointer
-    subject.code = ">"
-    subject.execute_code
+    subject.execute_code(">")
     
     assert_equal 1, subject.current_cell_index
   end
   
   def test_less_than_sign_decrements_the_pointer
-    subject.code = ">>><"
-    subject.execute_code
+    subject.execute_code(">>><")
     
     assert_equal 2, subject.current_cell_index
   end
   
   def test_plus_sign_increments_current_cell_value
-    subject.code = "+"
-    subject.execute_code
+    subject.execute_code("+")
     
     assert_equal 1, subject.current_cell_value
   end
@@ -41,8 +38,7 @@ class BrainfuckTest < Minitest::Test
   def test_minus_sign_decrements_current_cell_value
     subject.set_current_cell_value(5)
     
-    subject.code = "-"
-    subject.execute_code
+    subject.execute_code("-")
     
     assert_equal 4, subject.current_cell_value
   end
@@ -52,24 +48,23 @@ class Brainfuck
   CELL_ARRAY_SIZE = 30_000
   
   attr_reader :current_cell_index
-  attr_accessor :code
   
   def initialize
     @current_cell_index = 0
     @memory = Array.new(CELL_ARRAY_SIZE, 0)
   end
   
-  def execute_code
+  def execute_code(code)
     code.each_char do |command|
       case command
       when ">"
-        @current_cell_index += 1
+        increment_current_cell_index
       when "<"
-        @current_cell_index -= 1
+        decrement_current_cell_index
       when "+"
-        set_cell_value_at(current_cell_index, cell_value_at(current_cell_index) + 1)
+        increment_current_cell_value
       when "-"
-        set_current_cell_value(current_cell_value - 1)
+        decrement_current_cell_value
       end
     end
   end
@@ -92,4 +87,20 @@ class Brainfuck
   
   private
   attr_reader :memory
+  
+  def increment_current_cell_index
+    @current_cell_index += 1
+  end
+  
+  def decrement_current_cell_index
+    @current_cell_index -= 1
+  end
+  
+  def increment_current_cell_value
+    set_current_cell_value(current_cell_value + 1)
+  end
+  
+  def decrement_current_cell_value
+    set_current_cell_value(current_cell_value - 1)
+  end
 end
