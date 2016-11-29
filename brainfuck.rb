@@ -82,7 +82,7 @@ class Brainfuck
       when "-"
         decrement_current_cell_value
       when "."
-        output.puts(current_cell_value)
+        output_current_cell_value
       end
     end
   end
@@ -120,5 +120,9 @@ class Brainfuck
   
   def decrement_current_cell_value
     set_current_cell_value(current_cell_value - 1)
+  end
+  
+  def output_current_cell_value
+    output.puts(current_cell_value)
   end
 end
