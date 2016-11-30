@@ -2,10 +2,14 @@ require "minitest/autorun"
 
 class BrainfuckTest < Minitest::Test
   def subject
-    @subject ||= Brainfuck.new(output)
+    @subject ||= Brainfuck.new(input, output)
   end
   
   def output
+    Minitest::Mock.new
+  end
+  
+  def input
     Minitest::Mock.new
   end
   
@@ -47,7 +51,6 @@ class BrainfuckTest < Minitest::Test
     assert_equal 4, subject.current_cell_value
   end
   
-  
   def test_dot_outputs_value_of_the_current_cell
     subject.set_current_cell_value("a")
     subject.output.expect(:puts, nil, ["a"])
@@ -56,15 +59,25 @@ class BrainfuckTest < Minitest::Test
     
     subject.output.verify
   end
+  
+  def test_comma_reads_value_to_the_current_cell
+    subject.input.expect(:gets, "b")
+    
+    subject.execute_code(",")
+    
+    subject.input.verify
+    assert_equal "b", subject.current_cell_value
+  end
 end
 
 class Brainfuck
-  attr_reader :output
+  attr_reader :input, :output
   attr_reader :current_cell_index
   
   CELL_ARRAY_SIZE = 30_000
 
-  def initialize(output)
+  def initialize(input, output)
+    @input              = input
     @output             = output
     @current_cell_index = 0
     @memory             = Array.new(CELL_ARRAY_SIZE, 0)
@@ -83,6 +96,8 @@ class Brainfuck
         decrement_current_cell_value
       when "."
         output_current_cell_value
+      when ","
+        input_current_cell_value
       end
     end
   end
@@ -124,5 +139,9 @@ class Brainfuck
   
   def output_current_cell_value
     output.puts(current_cell_value)
+  end
+  
+  def input_current_cell_value
+    set_current_cell_value(input.gets)
   end
 end
