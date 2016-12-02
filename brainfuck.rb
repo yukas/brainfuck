@@ -1,6 +1,7 @@
 class Brainfuck
   attr_reader :input, :output
   attr_reader :current_cell_index
+  attr_accessor :loop_stack, :command_index
   
   CELL_ARRAY_SIZE = 30_000
 
@@ -9,10 +10,15 @@ class Brainfuck
     @output             = output
     @current_cell_index = 0
     @memory             = Array.new(CELL_ARRAY_SIZE, 0)
+    @loop_stack         = []
   end
   
   def execute_code(code)
-    code.each_char do |command|
+    @command_index = 0
+    
+    while command_index < code.length do
+      command = code[command_index]
+      
       case command
       when ">"
         increment_current_cell_index
@@ -26,7 +32,17 @@ class Brainfuck
         output_current_cell_value
       when ","
         input_current_cell_value
+      when "["
+        loop_stack.push(command_index)
+      when "]"
+        if current_cell_value > 0
+          self.command_index = loop_stack.last
+        else
+          loop_stack.pop
+        end
       end
+      
+      self.command_index += 1
     end
   end
   

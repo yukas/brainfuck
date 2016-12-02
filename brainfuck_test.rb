@@ -62,12 +62,35 @@ class BrainfuckTest < Minitest::Test
     subject.output.verify
   end
   
-  def test_comma_reads_value_to_the_current_cell
+  def test_comma_reads_value_into_the_current_cell
     subject.input.expect(:gets, "b")
     
     subject.execute_code(",")
     
     subject.input.verify
     assert_equal "b", subject.current_cell_value
+  end
+  
+  def test_left_bracket_pushes_current_command_position_to_the_loop_stack
+    subject.execute_code("[")
+
+    assert_equal 1, subject.loop_stack.length
+  end
+
+  def test_right_bracket_pulls_command_position_from_the_loop_stack
+    subject.loop_stack = [1]
+    
+    subject.execute_code("]")
+
+    assert_equal 0, subject.loop_stack.length
+  end
+
+  def test_right_bracket_moves_command_position_to_the_one_next_to_position_in_a_loop_stack
+    subject.set_current_cell_value(1)
+    subject.loop_stack = [100]
+    
+    subject.execute_code("]")
+
+    assert_equal 101, subject.command_index
   end
 end
