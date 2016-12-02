@@ -1,12 +1,12 @@
 class Brainfuck
   attr_reader :input, :output
-  attr_reader :current_cell_index
-  
+
   CELL_ARRAY_SIZE = 30_000
 
   def initialize(input, output)
     @input              = input
     @output             = output
+    
     @current_cell_index = 0
     @memory             = Array.new(CELL_ARRAY_SIZE, 0)
     @loop_stack         = []
@@ -45,6 +45,9 @@ class Brainfuck
     end
   end
   
+  private
+  attr_reader :memory, :loop_stack, :current_cell_index
+
   def cell_value_at(cell_index)
     memory[cell_index]
   end
@@ -60,9 +63,6 @@ class Brainfuck
   def set_current_cell_value(value)
     set_cell_value_at(current_cell_index, value)
   end
-  
-  private
-  attr_reader :memory, :loop_stack
 
   def increment_current_cell_index
     @current_cell_index += 1
