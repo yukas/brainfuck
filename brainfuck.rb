@@ -4,66 +4,60 @@ class Brainfuck
   CELL_ARRAY_SIZE = 30_000
 
   def initialize(input, output)
-    @input              = input
-    @output             = output
+    @input  = input
+    @output = output
     
+    @command_index      = 0
     @current_cell_index = 0
     @memory             = Array.new(CELL_ARRAY_SIZE, 0)
     @loop_stack         = []
   end
   
   def execute_code(code)
-    command_index = 0
+    @code = code
     
-    while command_index < code.length do
-      command = code[command_index]
-      
-      case command
-      when ">"
-        increment_current_cell_index
-      when "<"
-        decrement_current_cell_index
-      when "+"
-        increment_current_cell_value
-      when "-"
-        decrement_current_cell_value
-      when "."
-        output_current_cell_value
-      when ","
-        input_current_cell_value
-      when "["
-        start_a_loop(command_index)
-      when "]"
-        if another_iteration?
-          command_index = beginning_of_the_loop
-        else
-          finish_a_loop
-        end
-      end
-      
-      command_index += 1
+    while enough_commands_to_execute? do
+      execute_command
+      move_command_index
     end
   end
   
   private
-  attr_reader :memory, :loop_stack, :current_cell_index
-
-  def cell_value_at(cell_index)
-    memory[cell_index]
+  attr_reader :code, :command_index, :memory, :loop_stack, :current_cell_index
+  
+  def enough_commands_to_execute?
+    command_index < code.length
   end
   
-  def set_cell_value_at(cell_index, new_value)
-    memory[cell_index] = new_value
+  def execute_command
+    case command
+    when ">"
+      increment_current_cell_index
+    when "<"
+      decrement_current_cell_index
+    when "+"
+      increment_current_cell_value
+    when "-"
+      decrement_current_cell_value
+    when "."
+      output_current_cell_value
+    when ","
+      input_current_cell_value
+    when "["
+      start_a_loop
+    when "]"
+      if another_iteration?
+        move_to_the_beginning_of_the_loop
+      else
+        finish_a_loop
+      end
+    end
   end
   
-  def current_cell_value
-    cell_value_at(current_cell_index)
+  def command
+    code[command_index]
   end
   
-  def set_current_cell_value(value)
-    set_cell_value_at(current_cell_index, value)
-  end
-
   def increment_current_cell_index
     @current_cell_index += 1
   end
@@ -88,7 +82,7 @@ class Brainfuck
     set_current_cell_value(input.gets)
   end
   
-  def start_a_loop(command_index)
+  def start_a_loop
     loop_stack.push(command_index)
   end
   
@@ -96,11 +90,23 @@ class Brainfuck
     current_cell_value > 0
   end
   
-  def beginning_of_the_loop
-    loop_stack.last
+  def move_to_the_beginning_of_the_loop
+    @command_index = loop_stack.last
   end
   
   def finish_a_loop
     loop_stack.pop
+  end
+  
+  def move_command_index
+    @command_index += 1
+  end
+  
+  def set_current_cell_value(value)
+    memory[current_cell_index] = value
+  end
+  
+  def current_cell_value
+    memory[current_cell_index]
   end
 end
