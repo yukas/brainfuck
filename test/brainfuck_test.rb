@@ -1,10 +1,10 @@
 require 'minitest/autorun'
 
-require_relative 'brainfuck'
+require_relative '../brainfuck'
 
 class BrainfuckTest < Minitest::Test
   def subject
-    @subject ||= Brainfuck.new(input, output)
+    @subject ||= Brainfuck.new(input, output, encoding)
   end
   
   def input
@@ -13,6 +13,15 @@ class BrainfuckTest < Minitest::Test
   
   def output
     Minitest::Mock.new
+  end
+  
+  def encoding
+    encoding = Minitest::Mock.new
+  
+    def encoding.encode(val); val; end
+    def encoding.decode(val); val; end
+    
+    encoding
   end
   
   def test_greater_than_sign_increments_the_pointer
@@ -75,12 +84,12 @@ class BrainfuckTest < Minitest::Test
 
   private
   
-  def expect_input(ret_val)
-    subject.input.expect(:gets, ret_val)
+  def expect_input(input)
+    subject.input.expect(:gets, input)
   end
   
-  def expect_output(*args)
-    subject.output.expect(:puts, nil, args)
+  def expect_output(*output)
+    subject.output.expect(:puts, nil, output)
   end
   
   def verify_input

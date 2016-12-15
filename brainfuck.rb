@@ -1,11 +1,12 @@
 class Brainfuck
-  attr_reader :input, :output
+  attr_reader :input, :output, :encoding
 
   CELL_ARRAY_SIZE = 30_000
 
-  def initialize(input, output)
-    @input  = input
-    @output = output
+  def initialize(input, output, encoding)
+    @input    = input
+    @output   = output
+    @encoding = encoding
     
     @command_index      = 0
     @current_cell_index = 0
@@ -16,7 +17,7 @@ class Brainfuck
   def execute_code(code)
     @code = code
     
-    while enough_commands_to_execute? do
+    while commands_to_execute? do
       execute_command
       move_command_index
     end
@@ -25,7 +26,7 @@ class Brainfuck
   private
   attr_reader :code, :command_index, :memory, :loop_stack, :current_cell_index
   
-  def enough_commands_to_execute?
+  def commands_to_execute?
     command_index < code.length
   end
   
@@ -39,10 +40,10 @@ class Brainfuck
       increment_current_cell_value
     when "-"
       decrement_current_cell_value
-    when "."
-      output_current_cell_value
     when ","
       input_current_cell_value
+    when "."
+      output_current_cell_value
     when "["
       start_a_loop
     when "]"
@@ -74,12 +75,12 @@ class Brainfuck
     set_current_cell_value(current_cell_value - 1)
   end
   
-  def output_current_cell_value
-    output.puts(current_cell_value)
+  def input_current_cell_value
+    set_current_cell_value(encoding.decode(input.gets))
   end
   
-  def input_current_cell_value
-    set_current_cell_value(input.gets)
+  def output_current_cell_value
+    output.puts(encoding.encode(current_cell_value))
   end
   
   def start_a_loop
