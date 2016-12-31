@@ -115,6 +115,18 @@ class BrainfuckTest < Minitest::Test
       subject.execute_code("<")
     end
   end
+  
+  def test_unbalanced_left_bracket_are_a_fatal_error
+    assert_raises Brainfuck::FatalError do
+      subject.execute_code("[")
+    end
+  end
+
+  def test_unbalanced_right_bracket_are_a_fatal_error
+    assert_raises Brainfuck::FatalError do
+      subject.execute_code("]")
+    end
+  end
 
   private
   

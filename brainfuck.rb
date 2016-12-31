@@ -55,6 +55,8 @@ class Brainfuck
         start_a_loop
       end
     when "]"
+      check_for_unbalanced_right_bracket
+
       if another_iteration?
         move_to_the_beginning_of_the_loop
       else
@@ -74,15 +76,19 @@ class Brainfuck
   def decrement_current_cell_index
     cell_index = @current_cell_index - 1
     
-    raise FatalError.new("Attempting to go to the left of the starting cell") if cell_index < 0
+    raise_fatal_error("Attempting to go to the left of the starting cell") if cell_index < 0
     
     @current_cell_index = cell_index
+  end
+  
+  def raise_fatal_error(message)
+    raise FatalError.new(message)
   end
   
   def increment_current_cell_value
     cell_value = current_cell_value + 1
     
-    raise FatalError.new("Incrementing cell value of 255") if cell_value > 255
+    raise_fatal_error("Incrementing cell value of 255") if cell_value > 255
     
     set_current_cell_value(cell_value)
   end
@@ -90,7 +96,7 @@ class Brainfuck
   def decrement_current_cell_value
     cell_value = current_cell_value - 1
     
-    raise FatalError.new("Incrementing cell value of 0") if cell_value < 0
+    raise_fatal_error("Incrementing cell value of 0") if cell_value < 0
     
     set_current_cell_value(cell_value)
   end
@@ -109,12 +115,18 @@ class Brainfuck
   
   def jump_forward_past_the_matching_bracket
     while command != "]"
+      raise_fatal_error("Unbalanced left bracket") unless commands_to_execute?
+      
       move_command_index
     end
   end
   
   def start_a_loop
     loop_stack.push(command_index)
+  end
+  
+  def check_for_unbalanced_right_bracket
+    raise_fatal_error("Unbalanced right bracket") if loop_stack.empty?
   end
   
   def another_iteration?
