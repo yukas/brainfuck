@@ -65,8 +65,8 @@ class BrainfuckTest < Minitest::Test
   end
   
   def test_comma_reads_value_into_the_current_cell
-    expect_input(1)
-    expect_output(1)
+    expect_input("1")
+    expect_output("1")
     
     subject.execute_code(",.")
     
@@ -81,6 +81,14 @@ class BrainfuckTest < Minitest::Test
 
     verify_output
   end
+  
+  def test_jump_forward_past_the_matching_bracket_if_current_value_is_zero
+    expect_output(0)
+    
+    subject.execute_code("[>+++<]>.")
+    
+    verify_output
+  end
 
   private
   
@@ -89,7 +97,7 @@ class BrainfuckTest < Minitest::Test
   end
   
   def expect_output(*output)
-    subject.output.expect(:puts, nil, output)
+    subject.output.expect(:print, nil, output)
   end
   
   def verify_input

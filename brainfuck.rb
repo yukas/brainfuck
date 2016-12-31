@@ -45,7 +45,11 @@ class Brainfuck
     when "."
       output_current_cell_value
     when "["
-      start_a_loop
+      if current_cell_value_is_zero?
+        jump_forward_past_the_matching_bracket
+      else
+        start_a_loop
+      end
     when "]"
       if another_iteration?
         move_to_the_beginning_of_the_loop
@@ -76,11 +80,21 @@ class Brainfuck
   end
   
   def input_current_cell_value
-    set_current_cell_value(encoding.decode(input.gets))
+    set_current_cell_value(encoding.decode(input.gets.chomp))
   end
   
   def output_current_cell_value
-    output.puts(encoding.encode(current_cell_value))
+    output.print(encoding.encode(current_cell_value))
+  end
+  
+  def current_cell_value_is_zero?
+    current_cell_value == 0
+  end
+  
+  def jump_forward_past_the_matching_bracket
+    while command != "]"
+      move_command_index
+    end
   end
   
   def start_a_loop
