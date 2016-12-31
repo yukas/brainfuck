@@ -27,7 +27,7 @@ The Brainfuck programming language consists of eight commands, each of which is 
 * No special terminating character is used
 * Cells can contain values from 0 to 255
 * Incrementing 255 or decrementing 0 results in a fatal error
-* Memory is unbounded to the right
+* Memory size is 30 000 cells
 * Attempting to go to the left of the starting cell is a fatal error
 * `,` returns 0 on EOF
 * Unbalanced brackets are a fatal error
