@@ -72,7 +72,11 @@ class Brainfuck
   end
   
   def decrement_current_cell_index
-    @current_cell_index -= 1
+    cell_index = @current_cell_index - 1
+    
+    raise FatalError.new("Fatal Error") if cell_index < 0
+    
+    @current_cell_index = cell_index
   end
   
   def increment_current_cell_value
