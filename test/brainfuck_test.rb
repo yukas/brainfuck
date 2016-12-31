@@ -1,6 +1,6 @@
 require 'minitest/autorun'
 
-require_relative '../../brainfuck'
+require_relative '../brainfuck'
 
 class BrainfuckTest < Minitest::Test
   def subject

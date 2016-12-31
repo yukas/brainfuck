@@ -20,6 +20,8 @@ class Brainfuck
   def execute_code(code)
     @code = code
     
+    raise_fatal_error("Unbalanced brackets") unless balanced_brackets?
+    
     while commands_to_execute? do
       execute_command
       move_command_index
@@ -30,6 +32,20 @@ class Brainfuck
   
   attr_reader :code, :command_index, :memory, :loop_stack, :current_cell_index
   
+  def balanced_brackets?
+    stack = []
+    
+    code.chars do |char|
+      if char == "["
+        stack << "]"
+      elsif char == "]"
+        return false if stack.pop != "]"
+      end
+    end
+
+    stack.empty?
+  end
+    
   def commands_to_execute?
     command_index < code.length
   end
@@ -55,8 +71,6 @@ class Brainfuck
         start_a_loop
       end
     when "]"
-      check_for_unbalanced_right_bracket
-
       if another_iteration?
         move_to_the_beginning_of_the_loop
       else
@@ -96,7 +110,7 @@ class Brainfuck
   def decrement_current_cell_value
     cell_value = current_cell_value - 1
     
-    raise_fatal_error("Incrementing cell value of 0") if cell_value < 0
+    raise_fatal_error("Decrementing cell value of 0") if cell_value < 0
     
     set_current_cell_value(cell_value)
   end
@@ -114,19 +128,13 @@ class Brainfuck
   end
   
   def jump_forward_past_the_matching_bracket
-    while command != "]"
-      raise_fatal_error("Unbalanced left bracket") unless commands_to_execute?
-      
+    while command != "]" && commands_to_execute?
       move_command_index
     end
   end
   
   def start_a_loop
     loop_stack.push(command_index)
-  end
-  
-  def check_for_unbalanced_right_bracket
-    raise_fatal_error("Unbalanced right bracket") if loop_stack.empty?
   end
   
   def another_iteration?
