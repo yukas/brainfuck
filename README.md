@@ -1,4 +1,4 @@
-# TDDing Brainfuck
+# TDD'ing creation of Brainfuck interpreter in Ruby
 
 Look through commit history for steps it took to develop the interpreter using TDD.
 
