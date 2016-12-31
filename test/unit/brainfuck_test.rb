@@ -89,6 +89,14 @@ class BrainfuckTest < Minitest::Test
     
     verify_output
   end
+  
+  def ignore_non_brainfuck_instructions
+    expect_output(1)
+    
+    subject.execute_code("#!+.@")
+    
+    verify_output
+  end
 
   private
   
