@@ -74,7 +74,7 @@ class Brainfuck
   def decrement_current_cell_index
     cell_index = @current_cell_index - 1
     
-    raise FatalError.new("Fatal Error") if cell_index < 0
+    raise FatalError.new("Attempting to go to the left of the starting cell") if cell_index < 0
     
     @current_cell_index = cell_index
   end
@@ -82,7 +82,7 @@ class Brainfuck
   def increment_current_cell_value
     cell_value = current_cell_value + 1
     
-    raise FatalError.new("Fatal Error") if cell_value > 255
+    raise FatalError.new("Incrementing cell value of 255") if cell_value > 255
     
     set_current_cell_value(cell_value)
   end
@@ -90,7 +90,7 @@ class Brainfuck
   def decrement_current_cell_value
     cell_value = current_cell_value - 1
     
-    raise FatalError.new("Fatal Error") if cell_value < 0
+    raise FatalError.new("Incrementing cell value of 0") if cell_value < 0
     
     set_current_cell_value(cell_value)
   end
