@@ -1,6 +1,6 @@
 require 'minitest/autorun'
 
-require_relative '../brainfuck'
+require_relative '../../brainfuck'
 
 class BrainfuckTest < Minitest::Test
   def subject
@@ -96,6 +96,18 @@ class BrainfuckTest < Minitest::Test
     subject.execute_code("#!+.@")
     
     verify_output
+  end
+  
+  def test_incrementing_255_results_in_a_fatal_error
+    assert_raises Brainfuck::FatalError do 
+      subject.execute_code("++++++++[>++++++++<-]>[<++++>-]<.")
+    end
+  end
+  
+  def test_decrementing_0_results_in_a_fatal_error
+    assert_raises Brainfuck::FatalError do 
+      subject.execute_code("-")
+    end
   end
 
   private

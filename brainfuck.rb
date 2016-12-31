@@ -2,6 +2,9 @@ class Brainfuck
   attr_reader :input, :output, :encoding
 
   CELL_ARRAY_SIZE = 30_000
+  
+  class FatalError < RuntimeError
+  end
 
   def initialize(input, output, encoding)
     @input    = input
@@ -24,6 +27,7 @@ class Brainfuck
   end
   
   private
+  
   attr_reader :code, :command_index, :memory, :loop_stack, :current_cell_index
   
   def commands_to_execute?
@@ -72,11 +76,19 @@ class Brainfuck
   end
   
   def increment_current_cell_value
-    set_current_cell_value(current_cell_value + 1)
+    cell_value = current_cell_value + 1
+    
+    raise FatalError.new("Fatal Error") if cell_value > 255
+    
+    set_current_cell_value(cell_value)
   end
   
   def decrement_current_cell_value
-    set_current_cell_value(current_cell_value - 1)
+    cell_value = current_cell_value - 1
+    
+    raise FatalError.new("Fatal Error") if cell_value < 0
+    
+    set_current_cell_value(cell_value)
   end
   
   def input_current_cell_value
