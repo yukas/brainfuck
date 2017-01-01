@@ -127,6 +127,14 @@ class BrainfuckTest < Minitest::Test
       subject.execute_code("]")
     end
   end
+  
+  def test_fast_forward_jump_with_nested_brackets
+    expect_output(1)
+    
+    subject.execute_code("[++[]++]+.")
+    
+    verify_output
+  end
 
   private
   

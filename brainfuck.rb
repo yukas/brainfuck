@@ -128,8 +128,16 @@ class Brainfuck
   end
   
   def jump_forward_past_the_matching_bracket
-    while command != "]" && commands_to_execute?
+    stack = ["]"]
+    
+    while !stack.empty?
       move_command_index
+      
+      if command == "["
+        stack << "]"
+      elsif command == "]"
+        stack.pop
+      end
     end
   end
   
