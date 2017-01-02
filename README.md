@@ -1,5 +1,7 @@
 # TDD'ing creation of Brainfuck interpreter in Ruby
 
+[![Build Status](https://semaphoreci.com/api/v1/yukas/brainfuck/branches/master/badge.svg)](https://semaphoreci.com/yukas/brainfuck)
+
 Look through commit history for steps it took to develop the interpreter using TDD.
 
 Brainfuck is the ungodly creation of Urban Müller, whose goal was apparently to create a Turing-complete language for which he could write the smallest compiler ever, for the Amiga OS 2.0. His compiler was 240 bytes in size.
