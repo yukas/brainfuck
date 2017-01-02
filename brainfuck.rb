@@ -88,7 +88,7 @@ class Brainfuck
     def unbalanced_brackets?
       stack = []
     
-      code.chars do |char|
+      code.chars.each do |char|
         if char == "["
           stack << "]"
         elsif char == "]"
