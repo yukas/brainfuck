@@ -20,10 +20,36 @@ class Brainfuck
   def execute_code(code)
     @code = code
     
-    raise_fatal_error("Unbalanced brackets") unless balanced_brackets?
+    raise_fatal_error("Unbalanced brackets") if unbalanced_brackets?
     
-    while commands_to_execute? do
-      execute_command
+    while command_index < code.length do
+      case command
+      when ">"
+        increment_current_cell_index
+      when "<"
+        decrement_current_cell_index
+      when "+"
+        increment_current_cell_value
+      when "-"
+        decrement_current_cell_value
+      when ","
+        input_current_cell_value
+      when "."
+        output_current_cell_value
+      when "["
+        if can_start_a_loop?
+          start_a_loop
+        else
+          jump_forward_past_the_matching_bracket
+        end
+      when "]"
+        if can_finish_a_loop?
+          finish_a_loop
+        else
+          move_to_the_beginning_of_the_loop
+        end
+      end
+      
       move_command_index
     end
   end
@@ -32,53 +58,20 @@ class Brainfuck
   
   attr_reader :code, :command_index, :memory, :loop_stack, :current_cell_index
   
-  def balanced_brackets?
+  def unbalanced_brackets?
     stack = []
     
     code.chars do |char|
       if char == "["
         stack << "]"
       elsif char == "]"
-        return false if stack.pop != "]"
+        return true if stack.pop != "]"
       end
     end
 
-    stack.empty?
+    !stack.empty?
   end
     
-  def commands_to_execute?
-    command_index < code.length
-  end
-  
-  def execute_command
-    case command
-    when ">"
-      increment_current_cell_index
-    when "<"
-      decrement_current_cell_index
-    when "+"
-      increment_current_cell_value
-    when "-"
-      decrement_current_cell_value
-    when ","
-      input_current_cell_value
-    when "."
-      output_current_cell_value
-    when "["
-      if current_cell_value_is_zero?
-        jump_forward_past_the_matching_bracket
-      else
-        start_a_loop
-      end
-    when "]"
-      if another_iteration?
-        move_to_the_beginning_of_the_loop
-      else
-        finish_a_loop
-      end
-    end
-  end
-  
   def command
     code[command_index]
   end
@@ -123,8 +116,8 @@ class Brainfuck
     output.print(encoding.encode(current_cell_value))
   end
   
-  def current_cell_value_is_zero?
-    current_cell_value == 0
+  def can_start_a_loop?
+    current_cell_value > 0
   end
   
   def jump_forward_past_the_matching_bracket
@@ -145,8 +138,8 @@ class Brainfuck
     loop_stack.push(command_index)
   end
   
-  def another_iteration?
-    current_cell_value > 0
+  def can_finish_a_loop?
+    current_cell_value == 0
   end
   
   def move_to_the_beginning_of_the_loop
