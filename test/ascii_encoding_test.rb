@@ -1,6 +1,4 @@
-require 'minitest/autorun'
-
-require_relative '../ascii_encoding'
+require 'test_helper'
 
 class ASCIIEncodingTest < Minitest::Test
   def subject

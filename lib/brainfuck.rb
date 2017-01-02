@@ -1,3 +1,6 @@
+require "brainfuck/version"
+require "brainfuck/ascii_encoding"
+
 class Brainfuck
   attr_reader :io, :encoding
 
