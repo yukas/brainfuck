@@ -1,71 +1,83 @@
+# frozen_string_literal: true
+
+# `Interpreter` is the core class which does all the job of running Brainfuck
+#  code
+#
+
+# rubocop:disable Metrics/ClassLength
+# rubocop:disable Metrics/PerceivedComplexity
+# rubocop:disable Metrics/CyclomaticComplexity
+# rubocop:disable Metrics/MethodLength
 class Interpreter
   CELL_ARRAY_SIZE = 30_000
-  
+
+  FATAL_LEFT = 'Attempting to go to the left of the starting cell'.freeze
+
   attr_reader :code, :io
-  
+
   def initialize(code, io)
     @code = code
     @io   = io
-    
+
     @memory             = Array.new(CELL_ARRAY_SIZE, 0)
     @command_index      = 0
     @current_cell_index = 0
     @loop_stack         = []
   end
-  
-  def run
-    raise_fatal_error("Unbalanced brackets") if unbalanced_brackets?
-  
-    while command_index < code.length do
+
+  def run # rubocop:disable Metrics/AbcSize
+    raise_fatal_error('Unbalanced brackets') if unbalanced_brackets?
+
+    while command_index < code.length
       case command
-      when ">"
+      when '>'
         increment_current_cell_index
-      when "<"
+      when '<'
         decrement_current_cell_index
-      when "+"
+      when '+'
         increment_current_cell_value
-      when "-"
+      when '-'
         decrement_current_cell_value
-      when ","
+      when ','
         input_current_cell_value
-      when "."
+      when '.'
         output_current_cell_value
-      when "["
+      when '['
         if can_start_a_loop?
           start_a_loop
         else
           jump_forward_past_the_matching_bracket
         end
-      when "]"
+      when ']'
         if can_finish_a_loop?
           finish_a_loop
         else
           move_to_the_beginning_of_the_loop
         end
       end
-    
+
       move_command_index
     end
   end
 
   private
-  
+
   attr_reader :memory, :command_index, :current_cell_index, :loop_stack
-  
+
   def unbalanced_brackets?
     stack = []
-  
+
     code.chars.each do |char|
-      if char == "["
-        stack << "]"
-      elsif char == "]"
-        return true if stack.pop != "]"
+      if char == '['
+        stack << ']'
+      elsif char == ']'
+        return true if stack.pop != ']'
       end
     end
 
     !stack.empty?
   end
-  
+
   def command
     code[command_index]
   end
@@ -76,29 +88,29 @@ class Interpreter
 
   def decrement_current_cell_index
     cell_index = @current_cell_index - 1
-  
-    raise_fatal_error("Attempting to go to the left of the starting cell") if cell_index < 0
-  
+
+    raise_fatal_error(FATAL_LEFT) if cell_index < 0
+
     @current_cell_index = cell_index
   end
 
   def raise_fatal_error(message)
-    raise FatalError.new(message)
+    raise FatalError, message
   end
 
   def increment_current_cell_value
     cell_value = current_cell_value + 1
-  
-    raise_fatal_error("Incrementing cell value of 255") if cell_value > 255
-  
+
+    raise_fatal_error('Incrementing cell value of 255') if cell_value > 255
+
     set_current_cell_value(cell_value)
   end
 
   def decrement_current_cell_value
     cell_value = current_cell_value - 1
-  
-    raise_fatal_error("Decrementing cell value of 0") if cell_value < 0
-  
+
+    raise_fatal_error('Decrementing cell value of 0') if cell_value < 0
+
     set_current_cell_value(cell_value)
   end
 
@@ -115,14 +127,14 @@ class Interpreter
   end
 
   def jump_forward_past_the_matching_bracket
-    stack = ["]"]
-  
-    while !stack.empty?
+    stack = [']']
+
+    until stack.empty?
       move_command_index
-    
-      if command == "["
-        stack << "]"
-      elsif command == "]"
+
+      if command == '['
+        stack << ']'
+      elsif command == ']'
         stack.pop
       end
     end
@@ -133,7 +145,7 @@ class Interpreter
   end
 
   def can_finish_a_loop?
-    current_cell_value == 0
+    current_cell_value.zero?
   end
 
   def move_to_the_beginning_of_the_loop
@@ -148,6 +160,7 @@ class Interpreter
     @command_index += 1
   end
 
+  # rubocop:disable Style/AccessorMethodName
   def set_current_cell_value(value)
     memory[current_cell_index] = value
   end
