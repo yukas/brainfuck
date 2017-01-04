@@ -83,31 +83,31 @@ class BrainfuckTest < Minitest::Test
   end
   
   def test_incrementing_255_results_in_a_fatal_error
-    assert_raises Brainfuck::FatalError do
+    assert_raises FatalError do
       subject.execute_code("++++++++[>++++++++<-]>[<++++>-]<.")
     end
   end
   
   def test_decrementing_0_results_in_a_fatal_error
-    assert_raises Brainfuck::FatalError do
+    assert_raises FatalError do
       subject.execute_code("-")
     end
   end
   
   def test_going_to_the_left_of_the_starting_cell_is_a_fatal_error
-    assert_raises Brainfuck::FatalError do
+    assert_raises FatalError do
       subject.execute_code("<")
     end
   end
   
   def test_unbalanced_left_bracket_are_a_fatal_error
-    assert_raises Brainfuck::FatalError do
+    assert_raises FatalError do
       subject.execute_code("[")
     end
   end
 
   def test_unbalanced_right_bracket_are_a_fatal_error
-    assert_raises Brainfuck::FatalError do
+    assert_raises FatalError do
       subject.execute_code("]")
     end
   end
