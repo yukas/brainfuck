@@ -4,14 +4,18 @@ require 'brainfuck/ascii_encoding'
 require 'brainfuck/io'
 require 'brainfuck/fatal_error'
 
-class Brainfuck # rubocop:disable Style/Documentation
-  attr_reader :io, :encoding
+module Brainfuck
+  # Temporarily wrapper around Interpreter class
+  #
+  class Wrapper
+    attr_reader :io
 
-  def initialize(io)
-    @io = io
-  end
+    def initialize(io)
+      @io = io
+    end
 
-  def execute_code(code)
-    Interpreter.new(code, io).run
+    def execute_code(code)
+      Interpreter.new(code, io).run
+    end
   end
 end

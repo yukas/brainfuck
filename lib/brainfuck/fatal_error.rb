@@ -1,2 +1,4 @@
-class FatalError < RuntimeError
+module Brainfuck
+  class FatalError < RuntimeError
+  end
 end
