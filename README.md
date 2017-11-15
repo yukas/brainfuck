@@ -1,4 +1,4 @@
-# Creating Brainfuck interpreter in Ruby
+# Brainfuck interpreter in Ruby
 
 [![Build Status](https://semaphoreci.com/api/v1/yukas/brainfuck/branches/master/badge.svg)](https://semaphoreci.com/yukas/brainfuck)
 
